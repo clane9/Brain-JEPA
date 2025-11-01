@@ -5,6 +5,12 @@ from logging import getLogger
 import torch
 from torch.utils import data
 
+try:
+    from .s3_utils import ensure_s3_files_cached
+    HAS_S3_SUPPORT = True
+except ImportError:
+    HAS_S3_SUPPORT = False
+
 logger = getLogger()
 
 
@@ -13,6 +19,7 @@ class HCP_sex_scale(data.Dataset):
         self, 
         split='',
         processed_dir='',
+        cache_dir='~/.cache/brain-jepa',
         use_normalization=False,
         downsample=False,
         sampling_rate=3,
@@ -27,6 +34,15 @@ class HCP_sex_scale(data.Dataset):
         self.n_rois = 450
         self.seq_length = 490
         self.root_dir = ''
+        
+        # Handle S3 paths
+        if processed_dir.startswith('s3://'):
+            if not HAS_S3_SUPPORT:
+                raise ImportError("S3 support requires boto3. Install with: pip install boto3")
+            print(f"Detected S3 path: {processed_dir}")
+            processed_dir = ensure_s3_files_cached(processed_dir, cache_dir=cache_dir)
+            print(f"Using cached files from: {processed_dir}")
+        
         os.makedirs(processed_dir, exist_ok=True)
         
         self.input_x_file = os.path.join(processed_dir, 'hca450_{}_x.pt'.format(split))
@@ -111,7 +127,10 @@ def make_hca_sex(
     collator=None,
     pin_mem=True,
     num_workers=8,
+    # world_size=1,
+    # rank=0,
     drop_last=True,
+    # data_split=None,
     processed_dir='data/processed/hca_lifespan',
     use_normalization=False,
     label_normalization=False,
