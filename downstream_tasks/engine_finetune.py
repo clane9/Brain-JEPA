@@ -182,7 +182,7 @@ def evaluate(args, data_loader, model, device, task):
         predict = np.argmax(predict_class, axis=1)
         
         f1 = f1_score(gt, predict)
-        metric_logger.update(f1=f1.item())
+        metric_logger.update(f1=f1) # remove f1.item(), weird to assume f1 is a tensor when its just a float
         
         print('* Acc@1 {top1.global_avg:.3f} loss {losses.global_avg:.3f} F1 {f1.global_avg:.3f}'
             .format(top1=metric_logger.acc1, losses=metric_logger.loss, f1=metric_logger.f1))
