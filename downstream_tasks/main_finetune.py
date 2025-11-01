@@ -16,8 +16,8 @@ from torch.utils.tensorboard import SummaryWriter
 
 import timm
 
-assert timm.__version__ == "0.3.2" # version check
-from timm.models.layers import trunc_normal_
+# assert timm.__version__ == "0.3.2" # version check
+from timm.layers import trunc_normal_ # using newer timm version, import from timm.layers
 from timm.loss import LabelSmoothingCrossEntropy
 
 import downstream_tasks.util.lr_decay as lrd

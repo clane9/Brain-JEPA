@@ -19,8 +19,9 @@ from torch.utils.tensorboard import SummaryWriter
 
 import timm
 
-assert timm.__version__ == "0.3.2" # version check
-from timm.models.layers import trunc_normal_
+# assert timm.__version__ == "0.3.2" # version check
+# from timm.models.layers import trunc_normal_
+from timm.layers import trunc_normal_ # using newer timm version, import from timm.layers
 
 import downstream_tasks.util.misc as misc
 from downstream_tasks.util.misc import NativeScalerWithGradNormCount as NativeScaler
@@ -62,10 +63,7 @@ def main(args):
             batch_size=args.batch_size,
             pin_mem=args.pin_mem,
             num_workers=args.num_workers,
-            world_size=1,
-            rank=0,
             drop_last=False,
-            data_split=[0.6, 0.2, 0.2],
             processed_dir=getattr(args, 'data_path', 'data'),
             use_normalization=args.use_normalization,
             label_normalization=args.label_normalization,
