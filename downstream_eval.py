@@ -75,6 +75,8 @@ def get_args_parser():
     
     parser.add_argument('--output_root', type=str, default='',
                         help='load_dataset')
+    parser.add_argument('--data_path', type=str, default='data/',
+                        help='Path to processed dataset directory')
     
     return parser
 
