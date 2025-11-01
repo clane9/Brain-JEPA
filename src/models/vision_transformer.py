@@ -16,7 +16,7 @@ from src.utils.tensors import (
 )
 from src.masks.utils import apply_masks
 
-from flash_attn import flash_attn_qkvpacked_func
+# from flash_attn import flash_attn_qkvpacked_func # prevent flash_attn from being installed
 
 
 class GradTs_2dPE(nn.Module):
