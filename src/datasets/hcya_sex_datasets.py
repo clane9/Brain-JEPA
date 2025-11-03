@@ -68,7 +68,7 @@ class HCPYA_sex_scale(data.Dataset):
         input_x = sample["bold"] # [n_frames, n_rois]
         assert len(input_x) >= self.seq_length
         input_x = input_x[:self.seq_length].t().contiguous().float()  # [n_rois, n_frames]
-        label_y = self.target_map[sample["sub"]]
+        label_y = self.target_map[sample["meta"]["sub"]]
 
         if self.use_normalization:
             mean = input_x.mean()
