@@ -25,6 +25,7 @@ class HCPYA_sex_scale(data.Dataset):
         sampling_rate=3,
         num_frames=160,
         keep_in_memory=True,
+        make_constant=False,
     ):
         self.split = split
         self.processed_dir = processed_dir
@@ -34,6 +35,7 @@ class HCPYA_sex_scale(data.Dataset):
         self.sampling_rate = sampling_rate
         self.num_frames = num_frames
         self.keep_in_memory = keep_in_memory
+        self.make_constant = make_constant
 
         self.n_rois = 450
         self.seq_length = 490
@@ -74,6 +76,10 @@ class HCPYA_sex_scale(data.Dataset):
             mean = input_x.mean()
             std = input_x.std()
             input_x = (input_x - mean) / std
+
+        # replace time series with mean activity pattern
+        if self.make_constant:
+            input_x = input_x.mean(dim=1, keepdim=True).expand_as(input_x)
 
         if self.downsample:
             clip_size = self.sampling_rate * self.num_frames
@@ -144,13 +150,15 @@ def make_hcya_sex(
     use_normalization=False,
     label_normalization=False,
     downsample=False,
+    make_constant=False,
 ):
     # train data loader
     train_dataset = HCPYA_sex_scale(
         split='train',
         processed_dir=processed_dir,
         use_normalization=use_normalization,
-        downsample=downsample
+        downsample=downsample,
+        make_constant=make_constant,
     )
 
     train_data_loader = torch.utils.data.DataLoader(
@@ -167,7 +175,8 @@ def make_hcya_sex(
         split='valid',
         processed_dir=processed_dir,
         use_normalization=use_normalization,
-        downsample=downsample
+        downsample=downsample,
+        make_constant=make_constant,
     )
 
     valid_data_loader = torch.utils.data.DataLoader(
@@ -184,7 +193,9 @@ def make_hcya_sex(
         split='test',
         processed_dir=processed_dir,
         use_normalization=use_normalization,
-        downsample=downsample)
+        downsample=downsample,
+        make_constant=make_constant,
+    )
 
     test_data_loader = torch.utils.data.DataLoader(
         test_dataset,

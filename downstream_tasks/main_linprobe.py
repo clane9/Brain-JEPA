@@ -72,7 +72,8 @@ def main(args):
             processed_dir=getattr(args, 'data_path', 'data'),
             use_normalization=args.use_normalization,
             label_normalization=args.label_normalization,
-            downsample=args.downsample
+            downsample=args.downsample,
+            make_constant=args.make_constant,
         )
         
     else:
